@@ -1,0 +1,418 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Variáveis customizadas para o tema */
+    --color-primary: #ec4899;
+    --color-secondary: #8b5cf6;
+    --color-accent: #f59e0b;
+    --color-background: #fdf2f8;
+    --color-surface: #ffffff;
+    --color-text: #1f2937;
+    --color-text-secondary: #6b7280;
+    --color-border: #e5e7eb;
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+
+    /* Variáveis de gradiente */
+    --gradient-primary: rgb(236, 72, 153);
+    --gradient-secondary: rgb(255, 182, 193);
+    --gradient-tertiary: rgb(255, 228, 225);
+    --gradient-quaternary: rgb(255, 245, 248);
+    --gradient-background: linear-gradient(
+      135deg,
+      var(--gradient-quaternary) 0%,
+      var(--gradient-tertiary) 25%,
+      var(--gradient-secondary) 75%,
+      var(--gradient-primary) 100%
+    );
+    --gradient-surface: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    --gradient-button-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--gradient-secondary) 100%);
+    --gradient-button-secondary: linear-gradient(135deg, var(--color-secondary) 0%, var(--gradient-tertiary) 100%);
+    --gradient-header: linear-gradient(
+      90deg,
+      var(--gradient-primary) 0%,
+      var(--gradient-secondary) 50%,
+      var(--gradient-tertiary) 100%
+    );
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply text-foreground;
+    background: var(--gradient-background);
+    min-height: 100vh;
+    transition: background 0.5s ease, color 0.3s ease;
+  }
+
+  /* Aplicar gradiente de fundo em containers principais */
+  .main-container {
+    background: var(--gradient-background);
+    min-height: 100vh;
+  }
+}
+
+/* Classes utilitárias para gradientes */
+.bg-gradient-theme {
+  background: var(--gradient-background);
+}
+
+.bg-gradient-surface {
+  background: var(--gradient-surface);
+}
+
+.bg-gradient-card {
+  background: var(--gradient-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bg-gradient-header {
+  background: var(--gradient-header);
+}
+
+.bg-gradient-button-primary {
+  background: var(--gradient-button-primary);
+  transition: all 0.3s ease;
+}
+
+.bg-gradient-button-primary:hover {
+  background: linear-gradient(135deg, var(--gradient-secondary) 0%, var(--gradient-primary) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.bg-gradient-button-secondary {
+  background: var(--gradient-button-secondary);
+  transition: all 0.3s ease;
+}
+
+.bg-gradient-button-secondary:hover {
+  background: linear-gradient(135deg, var(--gradient-tertiary) 0%, var(--gradient-secondary) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Classes utilitárias para usar as cores customizadas */
+.bg-theme-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-theme-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-theme-accent {
+  background-color: var(--color-accent);
+}
+
+.bg-theme-background {
+  background-color: var(--color-background);
+}
+
+.bg-theme-surface {
+  background-color: var(--color-surface);
+}
+
+.text-theme-primary {
+  color: var(--color-primary);
+}
+
+.text-theme-secondary {
+  color: var(--color-secondary);
+}
+
+.text-theme-accent {
+  color: var(--color-accent);
+}
+
+.text-theme-text {
+  color: var(--color-text);
+}
+
+.text-theme-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.border-theme-border {
+  border-color: var(--color-border);
+}
+
+.border-theme-primary {
+  border-color: var(--color-primary);
+}
+
+/* Animações suaves para transições de tema */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Cards com efeito glassmorphism */
+.glass-card {
+  background: var(--gradient-card);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass-card {
+  background: var(--gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Efeitos hover para cards */
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.dark .glass-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Estilos específicos para modo escuro */
+.dark .bg-gradient-theme {
+  background: var(--gradient-background);
+}
+
+/* Melhorar contraste em modo escuro */
+.dark .text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .border {
+  border-color: hsl(var(--border));
+}
+
+/* Estilos para cards em modo escuro */
+.dark .bg-white {
+  background: var(--gradient-card);
+  color: hsl(var(--card-foreground));
+}
+
+/* Estilos para inputs em modo escuro */
+.dark input,
+.dark textarea,
+.dark select {
+  background: var(--gradient-surface);
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.2);
+}
+
+/* Estilos para botões em modo escuro */
+.dark .bg-primary {
+  background: var(--gradient-button-primary);
+}
+
+.dark .bg-secondary {
+  background: var(--gradient-button-secondary);
+}
+
+/* Header com gradiente */
+.gradient-header {
+  background: var(--gradient-header);
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Scrollbar personalizada com gradiente */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gradient-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-button-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-button-secondary);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--gradient-surface);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--gradient-button-primary);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-button-secondary);
+}
+
+/* Efeitos de brilho para elementos importantes */
+.glow-effect {
+  box-shadow: 0 0 20px rgba(var(--color-primary), 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-effect:hover {
+  box-shadow: 0 0 30px rgba(var(--color-primary), 0.5);
+}
+
+/* Gradiente animado para loading */
+.gradient-loading {
+  background: linear-gradient(
+    90deg,
+    var(--gradient-tertiary) 0%,
+    var(--gradient-secondary) 50%,
+    var(--gradient-tertiary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Overlay com gradiente para modais */
+.gradient-overlay {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.6) 100%);
+  backdrop-filter: blur(5px);
+}
+
+/* Botões com gradiente especial */
+.btn-gradient-primary {
+  background: var(--gradient-button-primary);
+  border: none;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gradient-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-gradient-primary:hover::before {
+  left: 100%;
+}
+
+.btn-gradient-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Stats cards com gradiente */
+.stats-card {
+  background: var(--gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.dark .stats-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .stats-card:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
