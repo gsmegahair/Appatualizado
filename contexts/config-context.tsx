@@ -21,8 +21,11 @@ const defaultConfig: AppConfig = {
   },
   birthdayReminders: true,
   theme: {
-    mode: "light",
-    colorPalette: "pink",
+    primaryColor: "#ec4899",
+    secondaryColor: "#8b5cf6",
+    backgroundColor: "#fdf2f8",
+    textColor: "#1f2937",
+    accentColor: "#f59e0b",
   },
   loginCredentials: {
     username: "GSmega",
@@ -35,7 +38,6 @@ const defaultConfig: AppConfig = {
     showAddress: true,
     showNotes: true,
     showLastMaintenance: true,
-    showMegaHairMethod: true, // Novo campo
     requirePhone: false,
     requireEmail: false,
   },

@@ -31,15 +31,11 @@ export function LoginForm() {
   }
 
   return (
-    <div className="main-container bg-gradient-theme min-h-screen flex items-center justify-center">
-      <Card className="w-full max-w-md glass-card">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50">
+      <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <img
-            src={config.logoUrl || "/placeholder.svg"}
-            alt={config.appName}
-            className="h-20 mx-auto mb-4 glow-effect rounded-lg"
-          />
-          <CardTitle className="text-2xl bg-gradient-header bg-clip-text text-transparent">{config.appName}</CardTitle>
+          <img src={config.logoUrl || "/placeholder.svg"} alt={config.appName} className="h-20 mx-auto mb-4" />
+          <CardTitle className="text-2xl">{config.appName}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -52,7 +48,7 @@ export function LoginForm() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="pl-10 glass-card"
+                  className="pl-10"
                   required
                 />
               </div>
@@ -67,19 +63,19 @@ export function LoginForm() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 glass-card"
+                  className="pl-10"
                   required
                 />
               </div>
             </div>
 
             {error && (
-              <Alert variant="destructive" className="glass-card">
+              <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <Button type="submit" className="w-full btn-gradient-primary">
+            <Button type="submit" className="w-full">
               Entrar
             </Button>
           </form>

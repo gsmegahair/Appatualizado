@@ -2,8 +2,10 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Upload, X, ImageIcon } from "lucide-react"
 
@@ -19,86 +21,62 @@ interface ImageUploadProps {
 export function ImageUpload({ label, value, onChange, className, maxWidth = 300, maxHeight = 200 }: ImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [imageError, setImageError] = useState(false)
-  const [imageSrc, setImageSrc] = useState<string>("/placeholder.svg")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Carregar imagem quando o valor mudar
-  useEffect(() => {
-    if (value) {
-      loadImage(value)
-    } else {
-      setImageSrc("/placeholder.svg")
-      setImageError(false)
-    }
-  }, [value])
-
-  const loadImage = async (src: string) => {
-    setIsLoading(true)
-    setImageError(false)
-
-    try {
-      if (src.startsWith("electron://image/")) {
-        if (typeof window !== "undefined" && window.electronAPI) {
-          try {
-            const imageId = src.replace("electron://image/", "")
-            const base64 = await window.electronAPI.store.get(`image_${imageId}`)
-            if (base64) {
-              setImageSrc(base64)
-            } else {
-              setImageSrc("/placeholder.svg")
-              setImageError(true)
-            }
-          } catch (error) {
-            console.error("Erro ao carregar imagem:", error)
-            setImageSrc("/placeholder.svg")
-            setImageError(true)
-          }
-        } else {
-          setImageSrc("/placeholder.svg")
-        }
-      } else {
-        setImageSrc(src || "/placeholder.svg")
-      }
-    } catch (error) {
-      console.error("Erro ao carregar imagem:", error)
-      setImageSrc("/placeholder.svg")
-      setImageError(true)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const handleFileSelect = async (file: File) => {
+    if (!file) return
+
+    // Verificar se é uma imagem
     if (!file.type.startsWith("image/")) {
-      alert("Por favor, selecione apenas arquivos de imagem.")
+      alert("Por favor, selecione apenas arquivos de imagem (PNG, JPG, JPEG, GIF)")
+      return
+    }
+
+    // Verificar tamanho do arquivo (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("O arquivo deve ter no máximo 5MB")
       return
     }
 
     setIsLoading(true)
 
     try {
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const base64 = e.target?.result as string
+      // Converter arquivo para base64
+      const base64 = await fileToBase64(file)
 
-        if (typeof window !== "undefined" && window.electronAPI) {
-          // Salvar no Electron Store
-          const imageId = Date.now().toString()
-          await window.electronAPI.store.set(`image_${imageId}`, base64)
-          const imageUrl = `electron://image/${imageId}`
-          onChange(imageUrl)
-        } else {
-          // Para web, usar base64 diretamente
-          onChange(base64)
-        }
+      // Se estivermos no Electron, salvar a imagem localmente
+      if (typeof window !== "undefined" && window.electronAPI) {
+        const imageId = `logo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        await window.electronAPI.store.set(`image_${imageId}`, base64)
+        onChange(`electron://image/${imageId}`)
+      } else {
+        // No navegador, usar base64 diretamente
+        onChange(base64)
       }
-      reader.readAsDataURL(file)
     } catch (error) {
       console.error("Erro ao processar imagem:", error)
-      alert("Erro ao processar a imagem.")
+      alert("Erro ao processar a imagem. Tente novamente.")
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = (error) => reject(error)
+    })
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+
+    const files = Array.from(e.dataTransfer.files)
+    if (files.length > 0) {
+      handleFileSelect(files[0])
     }
   }
 
@@ -112,16 +90,6 @@ export function ImageUpload({ label, value, onChange, className, maxWidth = 300,
     setIsDragging(false)
   }
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-
-    const files = Array.from(e.dataTransfer.files)
-    if (files.length > 0) {
-      handleFileSelect(files[0])
-    }
-  }
-
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files && files.length > 0) {
@@ -131,70 +99,97 @@ export function ImageUpload({ label, value, onChange, className, maxWidth = 300,
 
   const handleRemoveImage = () => {
     onChange("")
-    setImageSrc("/placeholder.svg")
-    setImageError(false)
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
   }
 
-  return (
-    <div className={className}>
-      <label className="block text-sm font-medium mb-2">{label}</label>
+  const getImageSrc = async (imagePath: string): Promise<string> => {
+    if (imagePath.startsWith("electron://image/")) {
+      const imageId = imagePath.replace("electron://image/", "")
+      if (typeof window !== "undefined" && window.electronAPI) {
+        try {
+          const base64 = await window.electronAPI.store.get(`image_${imageId}`)
+          return base64 || "/placeholder.svg"
+        } catch (error) {
+          console.error("Erro ao carregar imagem:", error)
+          return "/placeholder.svg"
+        }
+      }
+    }
+    return imagePath || "/placeholder.svg"
+  }
 
-      <Card className={`relative ${isDragging ? "border-blue-500 bg-blue-50" : ""}`}>
-        <CardContent className="p-4">
-          <div
-            className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-gray-400 transition-colors"
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {isLoading ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-2"></div>
-                <p className="text-sm text-gray-500">Carregando...</p>
-              </div>
-            ) : imageSrc !== "/placeholder.svg" && !imageError ? (
+  return (
+    <div className={`space-y-2 ${className}`}>
+      <Label>{label}</Label>
+
+      {value ? (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
               <div className="relative">
                 <img
-                  src={imageSrc || "/placeholder.svg"}
-                  alt="Preview"
-                  className="max-w-full max-h-48 mx-auto rounded-lg object-contain"
-                  style={{ maxWidth: maxWidth, maxHeight: maxHeight }}
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="absolute top-2 right-2"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleRemoveImage()
+                  src={value.startsWith("electron://") ? "/placeholder.svg" : value}
+                  alt={label}
+                  className="object-contain border rounded"
+                  style={{ maxWidth: `${maxWidth}px`, maxHeight: `${maxHeight}px` }}
+                  onLoad={async (e) => {
+                    if (value.startsWith("electron://")) {
+                      const src = await getImageSrc(value)
+                      ;(e.target as HTMLImageElement).src = src
+                    }
                   }}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                />
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8">
-                <ImageIcon className="h-12 w-12 text-gray-400 mb-2" />
-                <p className="text-sm text-gray-500 mb-1">Clique para selecionar ou arraste uma imagem</p>
-                <p className="text-xs text-gray-400">PNG, JPG, GIF até 10MB</p>
-                <Button type="button" variant="outline" className="mt-2">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Selecionar Arquivo
-                </Button>
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground mb-2">Imagem carregada com sucesso</p>
+                <div className="flex gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Trocar Imagem
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" onClick={handleRemoveImage}>
+                    <X className="h-4 w-4 mr-2" />
+                    Remover
+                  </Button>
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card
+          className={`border-2 border-dashed transition-colors ${
+            isDragging ? "border-primary bg-primary/5" : "border-muted-foreground/25"
+          }`}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+        >
+          <CardContent className="p-8">
+            <div className="text-center">
+              <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">Arraste uma imagem aqui ou clique para selecionar</p>
+                <p className="text-xs text-muted-foreground">Formatos aceitos: PNG, JPG, JPEG, GIF (máx. 5MB)</p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-4"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {isLoading ? "Processando..." : "Selecionar Imagem"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileInputChange} className="hidden" />
-
-          {imageError && <p className="text-sm text-red-500 mt-2">Erro ao carregar a imagem. Tente novamente.</p>}
-        </CardContent>
-      </Card>
+      <Input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileInputChange} className="hidden" />
     </div>
   )
 }

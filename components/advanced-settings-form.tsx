@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Settings, Palette, User, Users, Calendar, Eye, EyeOff, Save, RotateCcw } from "lucide-react"
 import { ImageUpload } from "./image-upload"
-import { ThemeSelector } from "./theme-selector"
 import { useConfig } from "../contexts/config-context"
 
 export function AdvancedSettingsForm() {
@@ -26,6 +25,7 @@ export function AdvancedSettingsForm() {
 
   const handleReset = () => {
     if (confirm("Tem certeza que deseja restaurar as configurações padrão?")) {
+      // Reset to default values
       const defaultConfig = {
         appName: "GS Mega Hair Studio Agendamento",
         logoUrl: "/placeholder.svg?height=100&width=200",
@@ -43,8 +43,11 @@ export function AdvancedSettingsForm() {
         },
         birthdayReminders: true,
         theme: {
-          mode: "light" as const,
-          colorPalette: "pink",
+          primaryColor: "#ec4899",
+          secondaryColor: "#8b5cf6",
+          backgroundColor: "#fdf2f8",
+          textColor: "#1f2937",
+          accentColor: "#f59e0b",
         },
         loginCredentials: {
           username: "GSmega",
@@ -108,7 +111,7 @@ export function AdvancedSettingsForm() {
       </div>
 
       <Tabs defaultValue="general" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-8">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="general">Geral</TabsTrigger>
           <TabsTrigger value="logos">Logos</TabsTrigger>
           <TabsTrigger value="theme">Tema</TabsTrigger>
@@ -116,7 +119,6 @@ export function AdvancedSettingsForm() {
           <TabsTrigger value="clients">Clientes</TabsTrigger>
           <TabsTrigger value="appointments">Agenda</TabsTrigger>
           <TabsTrigger value="notifications">Alertas</TabsTrigger>
-          <TabsTrigger value="export">Exportar</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-6">
@@ -222,9 +224,9 @@ export function AdvancedSettingsForm() {
                 />
               </div>
 
-              <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Dicas para Logos:</h4>
-                <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h4 className="font-semibold text-blue-800 mb-2">Dicas para Logos:</h4>
+                <ul className="text-sm text-blue-700 space-y-1">
                   <li>• Use imagens em alta resolução (PNG ou JPG)</li>
                   <li>• Prefira fundos transparentes (PNG) para melhor integração</li>
                   <li>• Logo principal: ideal para tela de login e relatórios</li>
@@ -241,11 +243,129 @@ export function AdvancedSettingsForm() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Palette className="h-5 w-5" />
-                Personalização de Tema e Cores
+                Personalização de Cores e Tema
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <ThemeSelector />
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="primaryColor">Cor Primária</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="primaryColor"
+                      type="color"
+                      value={formData.theme.primaryColor}
+                      onChange={(e) => handleNestedChange("theme", "primaryColor", e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={formData.theme.primaryColor}
+                      onChange={(e) => handleNestedChange("theme", "primaryColor", e.target.value)}
+                      placeholder="#ec4899"
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="secondaryColor">Cor Secundária</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="secondaryColor"
+                      type="color"
+                      value={formData.theme.secondaryColor}
+                      onChange={(e) => handleNestedChange("theme", "secondaryColor", e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={formData.theme.secondaryColor}
+                      onChange={(e) => handleNestedChange("theme", "secondaryColor", e.target.value)}
+                      placeholder="#8b5cf6"
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="backgroundColor">Cor de Fundo</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="backgroundColor"
+                      type="color"
+                      value={formData.theme.backgroundColor}
+                      onChange={(e) => handleNestedChange("theme", "backgroundColor", e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={formData.theme.backgroundColor}
+                      onChange={(e) => handleNestedChange("theme", "backgroundColor", e.target.value)}
+                      placeholder="#fdf2f8"
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="textColor">Cor do Texto</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="textColor"
+                      type="color"
+                      value={formData.theme.textColor}
+                      onChange={(e) => handleNestedChange("theme", "textColor", e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={formData.theme.textColor}
+                      onChange={(e) => handleNestedChange("theme", "textColor", e.target.value)}
+                      placeholder="#1f2937"
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="accentColor">Cor de Destaque</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="accentColor"
+                      type="color"
+                      value={formData.theme.accentColor}
+                      onChange={(e) => handleNestedChange("theme", "accentColor", e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={formData.theme.accentColor}
+                      onChange={(e) => handleNestedChange("theme", "accentColor", e.target.value)}
+                      placeholder="#f59e0b"
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 border rounded-lg" style={{ backgroundColor: formData.theme.backgroundColor }}>
+                <h4 className="font-semibold mb-2" style={{ color: formData.theme.textColor }}>
+                  Prévia do Tema
+                </h4>
+                <div className="flex gap-2">
+                  <div
+                    className="px-4 py-2 rounded text-white"
+                    style={{ backgroundColor: formData.theme.primaryColor }}
+                  >
+                    Botão Primário
+                  </div>
+                  <div
+                    className="px-4 py-2 rounded text-white"
+                    style={{ backgroundColor: formData.theme.secondaryColor }}
+                  >
+                    Botão Secundário
+                  </div>
+                  <div className="px-4 py-2 rounded text-white" style={{ backgroundColor: formData.theme.accentColor }}>
+                    Destaque
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -292,8 +412,8 @@ export function AdvancedSettingsForm() {
                 </div>
               </div>
 
-              <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+              <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-sm text-yellow-800">
                   <strong>Atenção:</strong> Alterar as credenciais de login afetará o acesso ao sistema. Certifique-se
                   de anotar as novas credenciais antes de salvar.
                 </p>
@@ -515,48 +635,6 @@ export function AdvancedSettingsForm() {
                   <Switch
                     checked={formData.reminderSettings.quarterly}
                     onCheckedChange={(checked) => handleNestedChange("reminderSettings", "quarterly", checked)}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="export" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Configurações de Exportação</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>Incluir Dados Pessoais</Label>
-                  <p className="text-sm text-muted-foreground">Incluir telefone e e-mail nas exportações</p>
-                </div>
-                <Switch
-                  checked={formData.exportSettings.includePersonalData}
-                  onCheckedChange={(checked) => handleNestedChange("exportSettings", "includePersonalData", checked)}
-                />
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="dateFormat">Formato de Data</Label>
-                  <Input
-                    id="dateFormat"
-                    value={formData.exportSettings.dateFormat}
-                    onChange={(e) => handleNestedChange("exportSettings", "dateFormat", e.target.value)}
-                    placeholder="DD/MM/YYYY"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="currency">Moeda</Label>
-                  <Input
-                    id="currency"
-                    value={formData.exportSettings.currency}
-                    onChange={(e) => handleNestedChange("exportSettings", "currency", e.target.value)}
-                    placeholder="BRL"
                   />
                 </div>
               </div>
